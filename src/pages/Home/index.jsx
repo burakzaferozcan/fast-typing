@@ -36,6 +36,7 @@ export class Home extends Component {
       checkWord: words[0],
     });
   }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (
       (this.state.changeWord !== prevState.changeWord &&
@@ -105,6 +106,20 @@ export class Home extends Component {
     }
   };
 
+  restart = () => {
+    let newWordList = wordList.sort(() => Math.random() - 0.5);
+
+    clearInterval(this.state.interval);
+    this.setState({
+      changeWord: "",
+      trueCount: 0,
+      falseCount: 0,
+      timer: 60,
+      interval: null,
+      checkWord: newWordList[0],
+    });
+  };
+
   render() {
     let {
       words,
@@ -169,7 +184,10 @@ export class Home extends Component {
                             {timer}
                             sn.
                           </Button>
-                          <Button variant={"outline-success ml-2"}>
+                          <Button
+                            onClick={() => this.restart()}
+                            variant={"outline-success ml-2"}
+                          >
                             Yenile
                           </Button>
                         </InputGroup>
@@ -189,13 +207,18 @@ export class Home extends Component {
                         <br />
                         <font style={{ fontSize: "50px" }}>60 DKS</font>
                         <br />
-                        Doğruluk Yüzdesi: 80%
+                        Doğruluk Yüzdesi: 50%
                         <br />
                         Doğru Kelime: 50
                         <br />
-                        Yanlış Kelime: 10
+                        Yanlış Kelime: 50
                         <br />
-                        <Button variant={"primary mt-2"}>Yeni Oyun</Button>
+                        <Button
+                          onClick={() => this.restart()}
+                          variant={"primary mt-2"}
+                        >
+                          Yeni Oyun
+                        </Button>
                       </Alert>
                     </Card.Text>
                   </Card.Body>
