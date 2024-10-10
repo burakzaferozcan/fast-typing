@@ -78,26 +78,27 @@ export class Home extends Component {
             changeWord: getValue.slice(0, -1),
           },
           () => {
-            if (checkWord === getValue.slice(0, -1)) {
-              words.shift();
+            words.shift();
 
+            if (checkWord === this.state.changeWord) {
+              const newTrueCount = trueCount + 1;
               this.setState({
-                changeWord: "",
-                checkWord: words[0],
+                checkWord: words[0] || "",
                 words: words,
-                trueCount: trueCount + 1,
-                truePercent:
-                  ((trueCount + 1) * 100) / (trueCount + 1 + falseCount),
+                trueCount: newTrueCount,
+                falseCount,
+                truePercent: (newTrueCount * 100) / (newTrueCount + falseCount),
+                changeWord: "",
               });
             } else {
-              words.shift();
-
+              const newFalseCount = falseCount + 1;
               this.setState({
-                changeWord: "",
-                checkWord: words[0],
+                checkWord: words[0] || "",
                 words: words,
-                falseCount: falseCount + 1,
-                truePercent: (trueCount * 100) / (trueCount + falseCount),
+                falseCount: newFalseCount,
+                trueCount,
+                truePercent: (trueCount * 100) / (trueCount + newFalseCount),
+                changeWord: "",
               });
             }
           }
@@ -117,6 +118,8 @@ export class Home extends Component {
       timer: 60,
       interval: null,
       checkWord: newWordList[0],
+      words: newWordList,
+      truePercent: 0,
     });
   };
 
@@ -138,9 +141,9 @@ export class Home extends Component {
             <Col md={12}>
               {timer > 0 ? (
                 <Card>
-                  <Card.Header>mType</Card.Header>
+                  <Card.Header>FAST TYPING</Card.Header>
                   <Card.Body>
-                    <Card.Title>mType Hız Testi</Card.Title>
+                    <Card.Title>Klavye Hız Testi</Card.Title>
                     <Card.Text>
                       Zamandan kazanmak için parmaklarını test et :)
                       <br />
@@ -153,6 +156,7 @@ export class Home extends Component {
                       {words.length > 0 &&
                         words.slice(0, 50).map((item, index) => (
                           <span
+                            key={index}
                             style={{
                               fontSize: "15px",
                               fontWeight: 600,
@@ -198,20 +202,22 @@ export class Home extends Component {
                 </Card>
               ) : (
                 <Card>
-                  <Card.Header>mType</Card.Header>
+                  <Card.Header>Fast Typing</Card.Header>
                   <Card.Body>
-                    <Card.Title>mType Hız Testi Sonuçları</Card.Title>
+                    <Card.Title>Hız Testi Sonuçları</Card.Title>
                     <Card.Text>
                       <Alert variant={"success"}>
                         <h4>Oyun bitti :)</h4>
                         <br />
-                        <font style={{ fontSize: "50px" }}>60 DKS</font>
+                        <font style={{ fontSize: "50px" }}>
+                          Girilen Toplam Kelime: {trueCount + falseCount}
+                        </font>
                         <br />
-                        Doğruluk Yüzdesi: 50%
+                        Doğruluk Yüzdesi: {truePercent.toFixed(2)}%
                         <br />
-                        Doğru Kelime: 50
+                        Doğru Kelime: {trueCount}
                         <br />
-                        Yanlış Kelime: 50
+                        Yanlış Kelime: {falseCount}
                         <br />
                         <Button
                           onClick={() => this.restart()}
