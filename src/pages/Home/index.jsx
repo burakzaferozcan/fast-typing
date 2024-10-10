@@ -36,6 +36,31 @@ export class Home extends Component {
       checkWord: words[0],
     });
   }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (
+      (this.state.changeWord !== prevState.changeWord &&
+        this.state.changeWord !== "") ||
+      (this.state.changeWord !== prevState.changeWord &&
+        this.state.changeWord === " ")
+    ) {
+      if (!this.state.interval) {
+        const intervalId = setInterval(() => {
+          this.setState(
+            (prevState) => ({
+              timer: prevState.timer - 1,
+            }),
+            () => {
+              if (this.state.timer <= 0) {
+                clearInterval(this.state.interval);
+                this.setState({ interval: null });
+              }
+            }
+          );
+        }, 1000);
+        this.setState({ interval: intervalId });
+      }
+    }
+  }
 
   handleWord = (event) => {
     let { words, checkWord, trueCount, falseCount } = this.state;
@@ -96,7 +121,7 @@ export class Home extends Component {
         <Container className={"mt-5"}>
           <Row>
             <Col md={12}>
-              {timer >= 60 ? (
+              {timer > 0 ? (
                 <Card>
                   <Card.Header>mType</Card.Header>
                   <Card.Body>
